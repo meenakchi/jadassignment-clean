@@ -48,7 +48,7 @@ public class StripeSuccessController extends HttpServlet {
             // Set Stripe API key
             Stripe.apiKey = System.getenv("STRIPE_SECRET_KEY");
             if (Stripe.apiKey == null || Stripe.apiKey.isEmpty()) {
-            	Stripe.apiKey = "sk_test_51SqVb3DpBm1pJ8jOQF7R2rrd7f28JqNbLMoFFBhKJBswtRhxyTnDhJ9jmjY1ug5hPg2rWewENVEjdRxpOIXWfX7u00K8k7Dunw"; 
+            	
 
             }
             
