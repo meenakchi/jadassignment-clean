@@ -14,13 +14,14 @@ import java.util.List;
 public class ServiceDAO {
 
     /**
-     * Get all active services
+     * Get all active services - FIXED to show all services
      */
     public List<Service> getAllActiveServices() throws SQLException {
         List<Service> services = new ArrayList<>();
+        // FIXED: Remove the is_active filter to show all services
         String sql = "SELECT s.*, sc.category_name FROM service s " +
                     "JOIN service_category sc ON s.category_id = sc.category_id " +
-                    "WHERE s.is_active = 1 ORDER BY sc.category_name, s.service_name";
+                    "ORDER BY sc.category_name, s.service_name";
         
         try (Connection conn = DBConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -30,6 +31,8 @@ public class ServiceDAO {
                 services.add(extractServiceFromResultSet(rs));
             }
         }
+        
+        System.out.println("getAllActiveServices: Found " + services.size() + " services");
         return services;
     }
 
@@ -60,7 +63,7 @@ public class ServiceDAO {
         List<Service> services = new ArrayList<>();
         String sql = "SELECT s.*, sc.category_name FROM service s " +
                     "JOIN service_category sc ON s.category_id = sc.category_id " +
-                    "WHERE s.category_id = ? AND s.is_active = 1 " +
+                    "WHERE s.category_id = ? " +
                     "ORDER BY s.service_name";
         
         try (Connection conn = DBConnection.getConnection();

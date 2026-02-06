@@ -35,15 +35,22 @@ public class ServicesController extends HttpServlet {
             List<Service> services;
             
             if (categoryParam.equals("all")) {
-                // Get all active services
+                // FIXED: Get ALL active services regardless of category
                 services = serviceDAO.getAllActiveServices();
+                System.out.println("DEBUG: Loading all services, found: " + services.size());
             } else {
                 // Get services by specific category
                 int categoryId = Integer.parseInt(categoryParam);
                 services = serviceDAO.getServicesByCategory(categoryId);
+                System.out.println("DEBUG: Loading category " + categoryId + ", found: " + services.size());
             }
 
             List<ServiceCategory> categories = serviceDAO.getAllCategories();
+
+            // Debug output
+            for(Service s : services) {
+                System.out.println("Service: " + s.getServiceName() + " - Image: " + s.getImageUrl() + " - Active: " + s.isActive());
+            }
 
             request.setAttribute("services", services);
             request.setAttribute("categories", categories);

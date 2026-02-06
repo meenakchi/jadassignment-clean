@@ -59,11 +59,16 @@
             <% for(Service service : services) {
                 String imageUrl = service.getImageUrl();
                 boolean isAvailable = service.isActive();
-                if(imageUrl != null && imageUrl.startsWith("/")) {
-                    imageUrl = imageUrl.substring(1);
-                }
-                if(imageUrl == null || imageUrl.isEmpty()) {
-                    imageUrl = "images/homepageimg.jpeg";
+                
+                // FIXED: Proper image path handling
+                if(imageUrl != null && !imageUrl.isEmpty()) {
+                    // Remove leading slash if present
+                    if(imageUrl.startsWith("/")) {
+                        imageUrl = imageUrl.substring(1);
+                    }
+                } else {
+                    // Default fallback image
+                    imageUrl = "images/default-service.jpg";
                 }
             %>
                 <div class="service-card <%= !isAvailable ? "unavailable" : "" %>">
@@ -71,10 +76,10 @@
                         <%= isAvailable ? "Available" : "Fully Booked" %>
                     </span>
                     
-                    <img src="<%= imageUrl %>"
+                    <img src="<%= request.getContextPath() %>/<%= imageUrl %>"
                          alt="<%= service.getServiceName() %>"
                          class="service-image"
-                         onerror="this.src='images/homepageimg.jpeg'">
+                         onerror="this.onerror=null; this.src='<%= request.getContextPath() %>/images/default-service.jpg'">
                     <div class="service-content">
                         <span class="service-category-badge">
                             <%= service.getCategoryName() %>

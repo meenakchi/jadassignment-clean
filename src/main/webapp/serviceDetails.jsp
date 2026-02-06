@@ -14,15 +14,19 @@
         return;
     }
     
+    // FIXED: Proper image path handling
     String imageUrl = service.getImageUrl();
-    if(imageUrl != null && imageUrl.startsWith("/")) {
-        imageUrl = imageUrl.substring(1);
-    }
-    if(imageUrl == null || imageUrl.isEmpty()) {
-        imageUrl = "images/homepageimg.jpeg";
+    if(imageUrl != null && !imageUrl.isEmpty()) {
+        // Remove leading slash if present
+        if(imageUrl.startsWith("/")) {
+            imageUrl = imageUrl.substring(1);
+        }
+    } else {
+        // Default fallback image
+        imageUrl = "images/default-service.jpg";
     }
 %>
-/* Service Details Page - Matches Services Grid */
+
 <style>
 .service-details-container {
     max-width: 1200px;
@@ -232,6 +236,7 @@
     box-shadow: none !important;
 }
 </style>
+
 <div class="service-details-container">
     <div class="breadcrumb">
         <a href="${pageContext.request.contextPath}/index.jsp">Home</a>
@@ -244,9 +249,9 @@
     <div class="service-detail-card">
         <div class="service-detail-grid">
             <div class="service-image-section">
-                <img src="<%= imageUrl %>" 
+                <img src="<%= request.getContextPath() %>/<%= imageUrl %>" 
                      alt="<%= service.getServiceName() %>" 
-                     onerror="this.src='images/default-service.jpg'">
+                     onerror="this.onerror=null; this.src='<%= request.getContextPath() %>/images/default-service.jpg'">
             </div>
             
             <div class="service-info-section">
