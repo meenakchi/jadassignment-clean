@@ -9,8 +9,8 @@
     String pageTitle = (String) request.getAttribute("pageTitle");
     if (pageTitle == null) pageTitle = "Feedback";
     
-    Boolean isAdmin = (Boolean) session.getAttribute("admin_id");
-    if (isAdmin == null) isAdmin = false;
+    Boolean isAdminObj = (Boolean) request.getAttribute("isAdmin");
+    boolean isAdmin = (isAdminObj != null && isAdminObj);
 %>
 
 <style>
@@ -100,6 +100,11 @@
     }
     .back-link:hover {
         text-decoration: underline;
+    }
+    .no-feedback {
+        text-align: center;
+        padding: 40px;
+        color: #7f8c8d;
     }
 </style>
 

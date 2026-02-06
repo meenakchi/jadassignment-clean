@@ -45,8 +45,9 @@ public class ViewFeedbackController extends HttpServlet {
         try {
             List<Feedback> feedbackList;
             String pageTitle;
+            boolean isAdmin = (adminId != null);
             
-            if (adminId != null) {
+            if (isAdmin) {
                 // Admin views all feedback
                 feedbackList = feedbackDAO.getAllFeedback();
                 pageTitle = "All Customer Feedback";
@@ -58,6 +59,7 @@ public class ViewFeedbackController extends HttpServlet {
 
             request.setAttribute("feedbackList", feedbackList);
             request.setAttribute("pageTitle", pageTitle);
+            request.setAttribute("isAdmin", isAdmin);
             request.getRequestDispatcher("/viewFeedback.jsp").forward(request, response);
 
         } catch (SQLException e) {

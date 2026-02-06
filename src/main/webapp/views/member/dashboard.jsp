@@ -17,7 +17,7 @@
         padding: 30px;
     }
     .welcome-section {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #2c3e50;
         color: white;
         padding: 40px;
         border-radius: 10px;
@@ -26,7 +26,7 @@
     }
     .dashboard-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 25px;
         margin-bottom: 30px;
     }
@@ -55,7 +55,7 @@
         margin-bottom: 20px;
     }
     .card-btn {
-        background: #3498db;
+        background: #FF8C00;
         color: white;
         padding: 12px 24px;
         border-radius: 5px;
@@ -114,28 +114,24 @@
 
     <div class="dashboard-grid">
         <div class="dashboard-card">
-            <div class="card-icon">📅</div>
             <div class="card-title">My Bookings</div>
             <div class="card-desc">View and manage your service bookings</div>
             <a href="${pageContext.request.contextPath}/BookingHistoryController" class="card-btn">View Bookings</a>
         </div>
 
         <div class="dashboard-card">
-            <div class="card-icon">🛒</div>
             <div class="card-title">Shopping Cart</div>
             <div class="card-desc">Review items in your cart</div>
             <a href="${pageContext.request.contextPath}/ViewCartController" class="card-btn">View Cart</a>
         </div>
 
         <div class="dashboard-card">
-            <div class="card-icon">🏥</div>
             <div class="card-title">Browse Services</div>
             <div class="card-desc">Explore our care services</div>
             <a href="${pageContext.request.contextPath}/ServicesController" class="card-btn">Browse</a>
         </div>
 
         <div class="dashboard-card">
-            <div class="card-icon">💬</div>
             <div class="card-title">My Feedback</div>
             <div class="card-desc">View your reviews and ratings</div>
             <a href="${pageContext.request.contextPath}/ViewFeedbackController" class="card-btn">View Feedback</a>
