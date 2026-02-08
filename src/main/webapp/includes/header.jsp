@@ -1,10 +1,15 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%
-    // Check if user is logged in
+    // Check if user is logged in (member OR admin)
     Integer headerMemberId = (Integer) session.getAttribute("member_id");
+    Integer headerAdminId = (Integer) session.getAttribute("admin_id");
     String headerUsername = (String) session.getAttribute("username");
-    boolean headerIsLoggedIn = (headerMemberId != null);
+    String headerAdminName = (String) session.getAttribute("admin_name");
+    
+    boolean headerIsLoggedIn = (headerMemberId != null || headerAdminId != null);
+    boolean isAdmin = (headerAdminId != null);
+    boolean isMember = (headerMemberId != null);
 %>
 
 <!DOCTYPE html>
@@ -20,7 +25,9 @@
         /* Override navbar button styles with orange */
         .nav-menu .btn-login {
             background-color: transparent !important;
-             padding: 8px 20px;
+            color: #FFA500 !important;
+            border: 2px solid #FFA500 !important;
+            padding: 8px 20px;
             border-radius: 5px;
             font-weight: 600;
             transition: all 0.3s;
@@ -32,6 +39,7 @@
         }
 
         .nav-menu .btn-register {
+            background-color: #FFA500 !important;
             color: white !important;
             padding: 8px 20px;
             border-radius: 5px;
@@ -52,6 +60,12 @@
         .btn-primary:hover {
             background-color: #FF8C00 !important;
         }
+        
+        .nav-user {
+            color: #2c3e50;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -67,13 +81,20 @@
                     <li><a href="<%= request.getContextPath() %>/about.jsp">About</a></li>
                     <li><a href="<%= request.getContextPath() %>/contact.jsp">Contact</a></li>
 
-                    <% if (headerIsLoggedIn) { %>
-                        <!-- User logged in -->
-                        <a href="<%= request.getContextPath() %>/views/member/dashboard.jsp">Dashboard</a></li>
-                        <li><a href="<%= request.getContextPath() %>/logout.jsp" class="btn-logout">Logout</a></li>
+                    <% if (isAdmin) { %>
+                        <!-- ADMIN is logged in -->
+                        <li><a href="<%= request.getContextPath() %>/AdminDashboardController">Dashboard</a></li>
+                        <li><a href="<%= request.getContextPath() %>/LogoutController" class="btn-logout">Logout</a></li>
+                        <li class="nav-user">Admin: <%= headerAdminName != null ? headerAdminName : "Administrator" %></li>
+                        
+                    <% } else if (isMember) { %>
+                        <!-- MEMBER is logged in -->
+                        <li><a href="<%= request.getContextPath() %>/views/member/dashboard.jsp">Dashboard</a></li>
+                        <li><a href="<%= request.getContextPath() %>/LogoutController" class="btn-logout">Logout</a></li>
                         <li class="nav-user"><%= headerUsername %></li>
+                        
                     <% } else { %>
-                        <!-- User NOT logged in -->
+                        <!-- NO ONE is logged in - show login/register buttons -->
                         <li><a href="<%= request.getContextPath() %>/views/member/login.jsp" class="btn-login">Member Login</a></li>
                         <li><a href="<%= request.getContextPath() %>/adminLogin.jsp" class="btn-login">Admin Login</a></li>
                         <li><a href="<%= request.getContextPath() %>/registerMember.jsp" class="btn-register">Register</a></li>

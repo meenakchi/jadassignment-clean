@@ -1,10 +1,16 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="checkAdminSession.jsp" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="utils.DBConnection" %>
 
 <%
+    // Check admin session
+    Integer adminId = (Integer) session.getAttribute("admin_id");
+    if(adminId == null) {
+        response.sendRedirect(request.getContextPath() + "/AdminLoginController");
+        return;
+    }
+    
     int serviceId = Integer.parseInt(request.getParameter("id"));
     Map<String, Object> service = null;
     List<Map<String, Object>> categories = new ArrayList<Map<String, Object>>();
@@ -53,12 +59,12 @@
     }
     
     if(service == null) {
-        response.sendRedirect("manageServices.jsp");
+        response.sendRedirect(request.getContextPath() + "/ManageServicesController");
         return;
     }
 %>
 
-<%@ include file="includes/header.jsp" %>
+<%@ include file="/includes/header.jsp" %>
 
 <style>
     .admin-container {
@@ -159,17 +165,29 @@
     .required {
         color: #e74c3c;
     }
+    .current-image {
+        max-width: 200px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    #imagePreview {
+        margin-top: 10px;
+    }
+    #imagePreview img {
+        max-width: 300px;
+        border-radius: 8px;
+    }
 </style>
 
 <div class="admin-container">
-    <a href="manageServices.jsp" class="back-link">← Back to Services</a>
+    <a href="${pageContext.request.contextPath}/ManageServicesController" class="back-link">← Back to Services</a>
     
     <div class="form-card">
         <div class="form-header">
             <h2>Edit Service</h2>
         </div>
 
-        <form method="post" action="${pageContext.request.contextPath}/ManageServicesController">
+        <form method="post" action="${pageContext.request.contextPath}/ManageServicesController" enctype="multipart/form-data">
             <input type="hidden" name="action" value="update">
             <input type="hidden" name="service_id" value="<%= service.get("service_id") %>">
             
@@ -206,8 +224,31 @@
             </div>
 
             <div class="form-group">
-                <label>Image URL</label>
-                <input type="text" name="image_url" value="<%= service.get("image_url") != null ? service.get("image_url") : "" %>">
+                <label>Current Image</label>
+                <% 
+                    String currentImageUrl = (String) service.get("image_url");
+                    if (currentImageUrl != null && !currentImageUrl.isEmpty()) {
+                        if (currentImageUrl.startsWith("/")) {
+                            currentImageUrl = currentImageUrl.substring(1);
+                        }
+                %>
+                    <br>
+                    <img src="${pageContext.request.contextPath}/<%= currentImageUrl %>" 
+                         class="current-image"
+                         alt="Current service image"
+                         onerror="this.src='${pageContext.request.contextPath}/images/default-service.jpg'">
+                <% } else { %>
+                    <p style="color: #7f8c8d;">No image uploaded</p>
+                <% } %>
+            </div>
+
+            <div class="form-group">
+                <label>Upload New Image (optional)</label>
+                <input type="file" name="service_image" accept="image/*" 
+                       onchange="previewImage(this)">
+                <div id="imagePreview"></div>
+                <small style="color: #7f8c8d;">Leave empty to keep current image. Or provide image URL:</small>
+                <input type="text" name="image_url" placeholder="https://example.com/image.jpg" style="margin-top: 10px;">
             </div>
 
             <div class="form-group">
@@ -220,10 +261,23 @@
 
             <div style="margin-top: 30px;">
                 <button type="submit" class="btn-submit">Update Service</button>
-                <a href="manageServices.jsp" class="btn-cancel">Cancel</a>
+                <a href="${pageContext.request.contextPath}/ManageServicesController" class="btn-cancel">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<%@ include file="includes/footer.jsp" %>
+<script>
+function previewImage(input) {
+    var preview = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = '<img src="' + e.target.result + '" style="max-width: 300px; border-radius: 8px; margin-top: 10px;">';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
+
+<%@ include file="/includes/footer.jsp" %>

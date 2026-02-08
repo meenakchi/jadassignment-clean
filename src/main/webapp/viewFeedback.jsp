@@ -9,8 +9,8 @@
     String pageTitle = (String) request.getAttribute("pageTitle");
     if (pageTitle == null) pageTitle = "Feedback";
     
-    Boolean isAdminObj = (Boolean) request.getAttribute("isAdmin");
-    boolean isAdmin = (isAdminObj != null && isAdminObj);
+    Boolean isAdminViewObj = (Boolean) request.getAttribute("isAdmin");
+    boolean isAdminView = (isAdminViewObj != null && isAdminViewObj);
 %>
 
 <style>
@@ -109,7 +109,7 @@
 </style>
 
 <div class="feedback-container">
-    <% if (isAdmin) { %>
+    <% if (isAdminView) { %>
         <a href="${pageContext.request.contextPath}/AdminDashboardController" class="back-link">← Back to Dashboard</a>
     <% } else { %>
         <a href="${pageContext.request.contextPath}/MemberDashboardController" class="back-link">← Back to Dashboard</a>
@@ -124,13 +124,13 @@
         <div class="empty-state">
             <h3>No feedback yet</h3>
             <p style="color: #95a5a6; margin-bottom: 25px;">
-                <% if (!isAdmin) { %>
+                <% if (!isAdminView) { %>
                     Complete a booking to leave feedback!
                 <% } else { %>
                     No customers have submitted feedback yet.
                 <% } %>
             </p>
-            <% if (!isAdmin) { %>
+            <% if (!isAdminView) { %>
                 <a href="${pageContext.request.contextPath}/ServicesController" class="btn-primary" style="padding: 12px 30px; text-decoration: none; border-radius: 5px;">
                     Browse Services
                 </a>
@@ -154,7 +154,7 @@
                     
                     <div class="member-info">
                         <strong>By:</strong> <%= feedback.getMemberName() %>
-                        <% if (isAdmin) { %>
+                        <% if (isAdminView) { %>
                             | <strong>Booking ID:</strong> #<%= feedback.getBookingId() %>
                         <% } %>
                     </div>

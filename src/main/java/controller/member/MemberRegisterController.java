@@ -24,7 +24,7 @@ public class MemberRegisterController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("/views/member/register.jsp").forward(request, response);
+        request.getRequestDispatcher("/registerMember.jsp").forward(request, response);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class MemberRegisterController extends HttpServlet {
             // Check if username exists
             if (memberDAO.usernameExists(username)) {
                 request.setAttribute("errorMessage", "Username already exists");
-                request.getRequestDispatcher("/views/member/register.jsp").forward(request, response);
+                request.getRequestDispatcher("/registerMembers.jsp").forward(request, response);
                 return;
             }
 
@@ -53,13 +53,13 @@ public class MemberRegisterController extends HttpServlet {
                 request.getRequestDispatcher("/views/member/dashboard.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Registration failed. Please try again.");
-                request.getRequestDispatcher("/views/member/register.jsp").forward(request, response);
+                request.getRequestDispatcher("/registerMember.jsp").forward(request, response);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Database error: " + e.getMessage());
-            request.getRequestDispatcher("/views/member/register.jsp").forward(request, response);
+            request.getRequestDispatcher("/registerMember.jsp").forward(request, response);
         }
     }
 }

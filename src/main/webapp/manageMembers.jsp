@@ -1,72 +1,25 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ include file="checkAdminSession.jsp" %>
-<%@ page import="java.sql.*" %>
-<%@ page import="java.util.*" %>
-<%@ page import="utils.DBConnection" %>
+<%@ page import="java.util.*, model.Member" %>
+<%@ include file="/includes/header.jsp" %>
 
 <%
-    String message = "";
-    String messageType = "";
-    
-    // Handle DELETE action
-    if("delete".equals(request.getParameter("action"))) {
-        int memberId = Integer.parseInt(request.getParameter("id"));
-        Connection conn = null;
-        PreparedStatement pstmt = null;
-        
-        try {
-            conn = DBConnection.getConnection();
-            String sql = "DELETE FROM members WHERE member_id=?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, memberId);
-            
-            int rows = pstmt.executeUpdate();
-            if(rows > 0) {
-                message = "Member deleted successfully!";
-                messageType = "success";
-            }
-        } catch(Exception e) {
-            message = "Error deleting member: " + e.getMessage();
-            messageType = "error";
-        } finally {
-            if(pstmt != null) try { pstmt.close(); } catch(Exception e) {}
-            if(conn != null) try { conn.close(); } catch(Exception e) {}
-        }
+    // Check admin session
+    Integer adminId = (Integer) session.getAttribute("admin_id");
+    if(adminId == null) {
+        response.sendRedirect(request.getContextPath() + "/AdminLoginController");
+        return;
     }
     
-    // Fetch all members
-    List<Map<String, Object>> members = new ArrayList<Map<String, Object>>();
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
+    List<Member> members = (List<Member>) request.getAttribute("members");
     
-    try {
-        conn = DBConnection.getConnection();
-        String sql = "SELECT * FROM members ORDER BY full_name";
-        pstmt = conn.prepareStatement(sql);
-        rs = pstmt.executeQuery();
-        
-        while(rs.next()) {
-            Map<String, Object> member = new HashMap<String, Object>();
-            member.put("member_id", rs.getInt("member_id"));
-            member.put("username", rs.getString("username"));
-            member.put("full_name", rs.getString("full_name"));
-            member.put("email", rs.getString("email"));
-            member.put("phone", rs.getString("phone"));
-            member.put("address", rs.getString("address"));
-            members.add(member);
-        }
-    } catch(Exception e) {
-        message = "Error loading members: " + e.getMessage();
-        messageType = "error";
-    } finally {
-        if(rs != null) try { rs.close(); } catch(Exception e) {}
-        if(pstmt != null) try { pstmt.close(); } catch(Exception e) {}
-        if(conn != null) try { conn.close(); } catch(Exception e) {}
+    String message = (String) session.getAttribute("message");
+    String messageType = (String) session.getAttribute("messageType");
+    
+    if (message != null) {
+        session.removeAttribute("message");
+        session.removeAttribute("messageType");
     }
 %>
-
-<%@ include file="includes/header.jsp" %>
 
 <style>
     .admin-container {
@@ -171,19 +124,19 @@
 </style>
 
 <div class="admin-container">
-    <a href="adminDashboard.jsp" class="back-link">← Back to Dashboard</a>
+    <a href="${pageContext.request.contextPath}/AdminDashboardController" class="back-link">← Back to Dashboard</a>
     
     <div class="page-header">
         <h2>Manage Members</h2>
         <p style="color: #7f8c8d; margin: 5px 0 0 0;">View and manage registered members</p>
     </div>
 
-    <% if(!messageType.isEmpty()) { %>
+    <% if (message != null) { %>
         <div class="message <%= messageType %>"><%= message %></div>
     <% } %>
 
     <div class="members-table">
-        <% if(members.isEmpty()) { %>
+        <% if (members == null || members.isEmpty()) { %>
             <div class="no-members">
                 <h3>No members found</h3>
                 <p>No registered members in the system.</p>
@@ -201,17 +154,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <% for(Map<String, Object> member : members) { %>
+                    <% for (Member member : members) { %>
                         <tr>
-                            <td><%= member.get("member_id") %></td>
-                            <td><%= member.get("username") %></td>
-                            <td><%= member.get("full_name") %></td>
-                            <td><%= member.get("email") %></td>
-                            <td><%= member.get("phone") != null ? member.get("phone") : "N/A" %></td>
+                            <td><%= member.getMemberId() %></td>
+                            <td><%= member.getUsername() %></td>
+                            <td><%= member.getFullName() %></td>
+                            <td><%= member.getEmail() %></td>
+                            <td><%= member.getPhone() != null ? member.getPhone() : "N/A" %></td>
                             <td>
-                                <a href="viewMember.jsp?id=<%= member.get("member_id") %>" class="action-btn btn-view">View</a>
-                                <a href="editMember.jsp?id=<%= member.get("member_id") %>" class="action-btn btn-edit">Edit</a>
-                                <a href="manageMembers.jsp?action=delete&id=<%= member.get("member_id") %>" 
+                                <a href="${pageContext.request.contextPath}/MemberDetailsController?id=<%= member.getMemberId() %>" 
+                                   class="action-btn btn-view">View</a>
+                                <a href="${pageContext.request.contextPath}/ManageMembersController?action=delete&id=<%= member.getMemberId() %>" 
                                    class="action-btn btn-delete"
                                    onclick="return confirm('Are you sure you want to delete this member?')">
                                     Delete
@@ -225,4 +178,4 @@
     </div>
 </div>
 
-<%@ include file="includes/footer.jsp" %>
+<%@ include file="/includes/footer.jsp" %>
