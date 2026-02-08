@@ -235,6 +235,24 @@ $<%= String.format("%.2f", detail.getSubtotal()) %>
             </div>
         </div>
         
+<div class="action-buttons">
+    <% if (isAdmin) { %>
+        <a href="${pageContext.request.contextPath}/ManageBookingsController" class="btn btn-back">
+            ← Back to Bookings
+        </a>
+    <% } else { %>
+        <a href="${pageContext.request.contextPath}/BookingHistoryController" class="btn btn-back">
+            ← Back to History
+        </a>
+        
+        <% if ("COMPLETED".equals(booking.getStatus())) { %>
+            <a href="${pageContext.request.contextPath}/SubmitFeedbackController?booking_id=<%= booking.getBookingId() %>" 
+               class="btn" style="background-color: #f39c12;">
+                Leave Feedback
+            </a>
+        <% } %>
+    <% } %>
+</div>
         <div class="action-buttons">
             <% if (isAdmin) { %>
                 <a href="${pageContext.request.contextPath}/ManageBookingsController" class="btn btn-back">

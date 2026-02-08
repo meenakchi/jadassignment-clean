@@ -177,10 +177,28 @@
                 <input type="number" name="duration" min="15" step="15" required>
             </div>
 
-            <div class="form-group">
-                <label>Image URL</label>
-                <input type="text" name="image_url" placeholder="e.g., images/service-image.jpg">
-            </div>
+            
+<div class="form-group">
+    <label>Service Image</label>
+    <input type="file" name="service_image" accept="image/*" 
+           onchange="previewImage(this)">
+    <div id="imagePreview" style="margin-top: 10px;"></div>
+    <small style="color: #7f8c8d;">Or provide image URL:</small>
+    <input type="text" name="image_url" placeholder="https://example.com/image.jpg">
+</div>
+
+<script>
+function previewImage(input) {
+    var preview = document.getElementById('imagePreview');
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            preview.innerHTML = '<img src="' + e.target.result + '" style="max-width: 300px; border-radius: 8px;">';
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+</script>
 
             <div class="form-group">
                 <div class="checkbox-group">
@@ -191,9 +209,12 @@
 
             <div style="margin-top: 30px;">
                 <button type="submit" class="btn-submit">Add Service</button>
-                <a href="manageServices.jsp" class="btn-cancel">Cancel</a>
+                <a href="manageServices.jsp" class="btn-cancel">Cancel</a>=
             </div>
         </form>
+        
+<form method="post" action="${pageContext.request.contextPath}/ManageServicesController" 
+      enctype="multipart/form-data"> 
     </div>
 </div>
 

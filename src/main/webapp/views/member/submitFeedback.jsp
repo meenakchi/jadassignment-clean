@@ -156,7 +156,6 @@
 
         <form method="post" action="${pageContext.request.contextPath}/SubmitFeedbackController">
             <input type="hidden" name="booking_id" value="<%= booking.getBookingId() %>">
-            <input type="hidden" name="service_id" value="1">
             
             <div class="form-group">
                 <label>

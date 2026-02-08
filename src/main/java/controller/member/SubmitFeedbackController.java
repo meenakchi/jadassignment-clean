@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 @WebServlet("/SubmitFeedbackController")
 public class SubmitFeedbackController extends HttpServlet {
@@ -61,49 +62,60 @@ public class SubmitFeedbackController extends HttpServlet {
         }
     }
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+
+@Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    
+    HttpSession session = request.getSession(false);
+    
+    if (session == null || session.getAttribute("member_id") == null) {
+        response.sendRedirect(request.getContextPath() + "/MemberLoginController");
+        return;
+    }
+
+    int memberId = (Integer) session.getAttribute("member_id");
+    
+    try {
+        int bookingId = Integer.parseInt(request.getParameter("booking_id"));
+        int rating = Integer.parseInt(request.getParameter("rating"));
+        String comments = request.getParameter("comments");
         
-        HttpSession session = request.getSession(false);
-        
-        if (session == null || session.getAttribute("member_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/MemberLoginController");
-            return;
-        }
-
-        int memberId = (Integer) session.getAttribute("member_id");
-        
-        try {
-            int bookingId = Integer.parseInt(request.getParameter("booking_id"));
-            int serviceId = Integer.parseInt(request.getParameter("service_id"));
-            int rating = Integer.parseInt(request.getParameter("rating"));
-            String comments = request.getParameter("comments");
-
-            Feedback feedback = new Feedback();
-            feedback.setMemberId(memberId);
-            feedback.setBookingId(bookingId);
-            feedback.setServiceId(serviceId);
-            feedback.setRating(rating);
-            feedback.setComments(comments);
-
-            boolean success = feedbackDAO.addFeedback(feedback);
-
-            if (success) {
-                session.setAttribute("message", "Thank you for your feedback!");
-                session.setAttribute("messageType", "success");
-            } else {
-                session.setAttribute("message", "Failed to submit feedback");
-                session.setAttribute("messageType", "error");
-            }
-
-            response.sendRedirect(request.getContextPath() + "/BookingHistoryController");
-
-        } catch (SQLException | NumberFormatException e) {
-            e.printStackTrace();
-            session.setAttribute("message", "Error: " + e.getMessage());
+        // Get the first service from booking details
+        List details = bookingDAO.getBookingDetails(bookingId);
+        if (details.isEmpty()) {
+            session.setAttribute("message", "No services found for this booking");
             session.setAttribute("messageType", "error");
             response.sendRedirect(request.getContextPath() + "/BookingHistoryController");
+            return;
         }
+        
+        int serviceId = ((Feedback) details.get(0)).getServiceId();
+
+        Feedback feedback = new Feedback();
+        feedback.setMemberId(memberId);
+        feedback.setBookingId(bookingId);
+        feedback.setServiceId(serviceId);
+        feedback.setRating(rating);
+        feedback.setComments(comments);
+
+        boolean success = feedbackDAO.addFeedback(feedback);
+
+        if (success) {
+            session.setAttribute("message", "Thank you for your feedback!");
+            session.setAttribute("messageType", "success");
+        } else {
+            session.setAttribute("message", "Failed to submit feedback");
+            session.setAttribute("messageType", "error");
+        }
+
+        response.sendRedirect(request.getContextPath() + "/BookingHistoryController");
+
+    } catch (SQLException | NumberFormatException e) {
+        e.printStackTrace();
+        session.setAttribute("message", "Error: " + e.getMessage());
+        session.setAttribute("messageType", "error");
+        response.sendRedirect(request.getContextPath() + "/BookingHistoryController");
     }
+}
 }
