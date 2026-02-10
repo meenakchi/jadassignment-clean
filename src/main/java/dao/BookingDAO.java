@@ -7,7 +7,9 @@ import utils.DBConnection;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BookingDAO - Data Access Object for Booking operations
@@ -305,4 +307,47 @@ public class BookingDAO {
         booking.setMemberEmail(rs.getString("member_email"));
         return booking;
     }
+
+	public int getBookingCountByService(int serviceId) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public Map<Integer, BigDecimal> getTopClientsBySpending(int limit) throws SQLException {
+
+	    Map<Integer, BigDecimal> result = new LinkedHashMap<>();
+
+	    String sql =
+	        "SELECT member_id, SUM(total_amount) AS total_spent " +
+	        "FROM bookings " +
+	        "WHERE status IN ('CONFIRMED', 'COMPLETED') " +
+	        "GROUP BY member_id " +
+	        "ORDER BY total_spent DESC " +
+	        "LIMIT ?";
+
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+	        pstmt.setInt(1, limit);
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            while (rs.next()) {
+	                result.put(
+	                    rs.getInt("member_id"),
+	                    rs.getBigDecimal("total_spent")
+	                );
+	            }
+	        }
+	    }
+
+	    return result; 
+	}
+
+
+	public List<Integer> getMembersByService(int serviceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
 }
