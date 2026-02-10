@@ -344,10 +344,24 @@ public class BookingDAO {
 	}
 
 
-	public List<Integer> getMembersByService(int serviceId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Integer> getMembersByService(int serviceId) throws SQLException {
+	    List<Integer> memberIds = new ArrayList<>();
+
+	    String sql = "SELECT DISTINCT member_id FROM booking_details WHERE service_id = ?";
+	    try (Connection conn = DBConnection.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setInt(1, serviceId);
+	        try (ResultSet rs = ps.executeQuery()) {
+	            while (rs.next()) {
+	                memberIds.add(rs.getInt("member_id"));
+	            }
+	        }
+	    }
+
+	    return memberIds; // NEVER null
 	}
+
 
 	
 }

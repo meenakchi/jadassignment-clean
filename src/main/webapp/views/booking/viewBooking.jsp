@@ -1,4 +1,3 @@
-
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="model.Booking" %>
 <%@ page import="model.BookingDetail" %>
@@ -8,8 +7,7 @@
 <%
     Booking booking = (Booking) request.getAttribute("booking");
     List<BookingDetail> bookingDetails = (List<BookingDetail>) request.getAttribute("bookingDetails");
-    Boolean isAdmin = (Boolean) request.getAttribute("isAdmin");
-    if (isAdmin == null) isAdmin = false;
+   
 %>
 
 <style>
@@ -58,6 +56,10 @@
     .status-CANCELLED {
         background-color: #f8d7da;
         color: #721c24;
+    }
+    .status-IN_PROGRESS {
+        background-color: #cfe2ff;
+        color: #084298;
     }
     .info-section {
         background: #f8f9fa;
@@ -143,6 +145,7 @@
         display: flex;
         gap: 15px;
         justify-content: center;
+        flex-wrap: wrap;
     }
     .btn {
         padding: 15px 30px;
@@ -159,6 +162,10 @@
     }
     .btn-back {
         background-color: #95a5a6;
+        color: white;
+    }
+    .btn-feedback {
+        background-color: #f39c12;
         color: white;
     }
 </style>
@@ -211,69 +218,65 @@
             </div>
             
             <% if (bookingDetails != null && !bookingDetails.isEmpty()) { %>
-<div class="services-section">
-<h3>Services Booked</h3>
-<% for (BookingDetail detail : bookingDetails) { %>
-<div class="service-item">
-<div class="service-info">
-<div class="service-name"><%= detail.getServiceName() %></div>
-<div class="service-qty">
-Quantity: <%= detail.getQuantity() %> ×
-$<%= String.format("%.2f", detail.getServicePrice()) %>
-</div>
-</div>
-<div class="service-price">
-$<%= String.format("%.2f", detail.getSubtotal()) %>
-</div>
-</div>
-<% } %>
-</div>
-<% } %><div class="total-section">
-            <div class="total-label">Total Amount</div>
-            <div class="total-amount">
-                $<%= String.format("%.2f", booking.getTotalAmount()) %>
+                <div class="services-section">
+                    <h3>Services Booked</h3>
+                    <% for (BookingDetail detail : bookingDetails) { %>
+                        <div class="service-item">
+                            <div class="service-info">
+                                <div class="service-name"><%= detail.getServiceName() %></div>
+                                <div class="service-qty">
+                                    Quantity: <%= detail.getQuantity() %> ×
+                                    $<%= String.format("%.2f", detail.getServicePrice()) %>
+                                </div>
+                            </div>
+                            <div class="service-price">
+                                $<%= String.format("%.2f", detail.getSubtotal()) %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            <% } %>
+
+            <div class="total-section">
+                <div class="total-label">Total Amount</div>
+                <div class="total-amount">
+                    $<%= String.format("%.2f", booking.getTotalAmount()) %>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <% if (isAdmin) { %>
+                    <a href="${pageContext.request.contextPath}/ManageBookingsController" class="btn btn-back">
+                        ← Back to Bookings
+                    </a>
+                <% } else { %>
+                    <a href="${pageContext.request.contextPath}/BookingHistoryController" class="btn btn-back">
+                        ← Back to History
+                    </a>
+                    
+                    <% 
+                    // Show feedback button for COMPLETED or CONFIRMED bookings (after payment)
+                    if ("COMPLETED".equals(booking.getStatus()) || "CONFIRMED".equals(booking.getStatus())) { 
+                    %>
+                        <a href="${pageContext.request.contextPath}/SubmitFeedbackController?booking_id=<%= booking.getBookingId() %>" 
+                           class="btn btn-feedback">
+                            Leave Feedback
+                        </a>
+                    <% } %>
+                <% } %>
             </div>
         </div>
-        
-<div class="action-buttons">
-    <% if (isAdmin) { %>
-        <a href="${pageContext.request.contextPath}/ManageBookingsController" class="btn btn-back">
-            ← Back to Bookings
-        </a>
     <% } else { %>
-        <a href="${pageContext.request.contextPath}/BookingHistoryController" class="btn btn-back">
-            ← Back to History
-        </a>
-        
-        <% if ("COMPLETED".equals(booking.getStatus())) { %>
-            <a href="${pageContext.request.contextPath}/SubmitFeedbackController?booking_id=<%= booking.getBookingId() %>" 
-               class="btn" style="background-color: #f39c12;">
-                Leave Feedback
+        <div class="booking-card" style="text-align: center;">
+            <h3>Booking not found</h3>
+            <p style="color: #7f8c8d; margin: 20px 0;">
+                The booking you're looking for doesn't exist or you don't have permission to view it.
+            </p>
+            <a href="${pageContext.request.contextPath}/MemberDashboardController" class="btn btn-back">
+                Go to Dashboard
             </a>
-        <% } %>
+        </div>
     <% } %>
 </div>
-        <div class="action-buttons">
-            <% if (isAdmin) { %>
-                <a href="${pageContext.request.contextPath}/ManageBookingsController" class="btn btn-back">
-                    ← Back to Bookings
-                </a>
-            <% } else { %>
-                <a href="${pageContext.request.contextPath}/BookingHistoryController" class="btn btn-back">
-                    ← Back to History
-                </a>
-            <% } %>
-        </div>
-    </div>
-<% } else { %>
-    <div class="booking-card" style="text-align: center;">
-        <h3>Booking not found</h3>
-        <p style="color: #7f8c8d; margin: 20px 0;">
-            The booking you're looking for doesn't exist or you don't have permission to view it.
-        </p>
-        <a href="${pageContext.request.contextPath}/MemberDashboardController" class="btn btn-back">
-            Go to Dashboard
-        </a>
-    </div>
-<% } %> </div>
+
 <%@ include file="/includes/footer.jsp" %>

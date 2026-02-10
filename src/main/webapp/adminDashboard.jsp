@@ -234,7 +234,7 @@
         
         <!-- Client Reports -->
         <div class="report-card">
-            <h4>📍 Clients by Area</h4>
+            <h4>Clients by Area</h4>
             <p>Client listing by residential area code</p>
             <a href="${pageContext.request.contextPath}/ClientReportsController?action=by_area" class="report-btn">View Report</a>
         </div>
