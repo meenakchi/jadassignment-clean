@@ -21,22 +21,37 @@ public class DBConnection {
         String dbUrl = System.getenv("MYSQL_URL");
 
         if (dbUrl != null && !dbUrl.isEmpty()) {
+            System.out.println("📡 Railway MySQL URL detected");
+            
             // Fix the protocol
             if (dbUrl.startsWith("mysql://")) {
                 dbUrl = "jdbc:" + dbUrl;
             }
             
-            // This part is the "Cry-Stopper"
-            // It fixes the EOFException by allowing the security handshake
-            if (!dbUrl.contains("?")) {
-                dbUrl += "?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC";
-            } else if (!dbUrl.contains("allowPublicKeyRetrieval=true")) {
-                dbUrl += "&allowPublicKeyRetrieval=true&useSSL=false";
+            // CRITICAL FIX for Railway MySQL
+            // Remove any existing query parameters and add the correct ones
+            if (dbUrl.contains("?")) {
+                dbUrl = dbUrl.substring(0, dbUrl.indexOf("?"));
             }
             
-            return DriverManager.getConnection(dbUrl);
+            // Railway MySQL requires these specific parameters
+            dbUrl += "?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&autoReconnect=true";
+            
+            System.out.println("🔌 Connecting to Railway MySQL...");
+            System.out.println("   Host: " + (dbUrl.contains("@") ? dbUrl.substring(dbUrl.indexOf("@") + 1).split("/")[0] : "unknown"));
+            
+            try {
+                Connection conn = DriverManager.getConnection(dbUrl);
+                System.out.println("✅ Railway MySQL connection successful!");
+                return conn;
+            } catch (SQLException e) {
+                System.err.println("❌ Railway MySQL connection failed!");
+                System.err.println("   Error: " + e.getMessage());
+                throw e;
+            }
         }
 
+        System.out.println("🏠 Using local MySQL");
         return DriverManager.getConnection(LOCAL_URL, LOCAL_USER, LOCAL_PASSWORD);
     }
 }
