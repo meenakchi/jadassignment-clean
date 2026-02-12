@@ -89,7 +89,7 @@
                         
                     <% } else if (isMember) { %>
                         <!-- MEMBER is logged in -->
-                        <li><a href="<%= request.getContextPath() %>/views/member/dashboard.jsp">Dashboard</a></li>
+<li><a href="<%= request.getContextPath() %>/MemberDashboardController">Dashboard</a></li>
                         <li><a href="<%= request.getContextPath() %>/LogoutController" class="btn-logout">Logout</a></li>
                         <li class="nav-user"><%= headerUsername %></li>
                         

@@ -1,323 +1,164 @@
+<!-- b2b_partner_portal.html - IMPROVED VERSION -->
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partner Portal - Silver Care API</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #A78087;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-        
-        .header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
-        }
-        
-        .header p {
-            color: #7f8c8d;
-        }
-        
-        .controls {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-        
-        .filter-group {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        
-        .filter-group label {
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .filter-group select {
-            padding: 10px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        
-        .btn {
-            padding: 10px 25px;
-            border: none;
-            border-radius: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary {
-            background: #3498db;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #2980b9;
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-        }
-        
-        .service-card {
-            background: white;
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        
-        .service-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 25px rgba(0,0,0,0.15);
-        }
-        
-        .service-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 15px;
-        }
-        
-        .service-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .category-badge {
-            background: #e8f4f8;
-            color: #3498db;
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .service-description {
-            color: #7f8c8d;
-            margin-bottom: 15px;
-            line-height: 1.6;
-        }
-        
-        .service-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 15px;
-            border-top: 2px solid #f0f0f0;
-        }
-        
-        .price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #27ae60;
-        }
-        
-        .duration {
-            color: #7f8c8d;
-            font-size: 0.9rem;
-        }
-        
-        .status-badge {
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-        
-        .status-active {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .status-inactive {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: white;
-            font-size: 1.2rem;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        
-        .api-info {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        .api-endpoint {
-            background: #f8f9fa;
-            padding: 10px;
-            border-radius: 5px;
-            font-family: monospace;
-            margin: 10px 0;
-        }
-    </style>
+    <title>Healthcare Partner Portal - Silver Care API</title>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Partner Portal</h1>
-            <p>Healthcare Partner Integration - Silver Care Services API</p>
-        </div>
-
-        <div class="controls">
-            <div class="filter-group">
-                <label for="categoryFilter">Filter by Category:</label>
-                <select id="categoryFilter">
-                    <option value="all">All Services</option>
-                    <option value="1">In-home Care</option>
-                    <option value="2">Assisted Living Support</option>
-                    <option value="3">Specialized Care</option>
-                </select>
-                <button class="btn btn-primary" onclick="loadServices()">Load Services</button>
-                <button class="btn btn-primary" onclick="toggleApiInfo()">API Info</button>
-            </div>
-        </div>
-
-        <div id="apiInfo" class="api-info" style="display: none;">
-            <h3>REST API Endpoints</h3>
-            <p><strong>Base URL:</strong> http://localhost:8080/jadassignment/api/services</p>
-            <div class="api-endpoint">GET /api/services - Get all services</div>
-            <div class="api-endpoint">GET /api/services/{id} - Get service by ID</div>
-            <div class="api-endpoint">GET /api/services/category/{categoryId} - Get services by category</div>
-        </div>
-
-        <div id="loading" class="loading" style="display: none;">
-            Loading services...
-        </div>
-
-        <div id="error" class="error" style="display: none;"></div>
-
-        <div id="servicesContainer" class="services-grid"></div>
+    <h1>Partner Portal - ABC Hospital</h1>
+    
+    <!-- Partner Dashboard -->
+    <div id="partnerStats">
+        <h2>Your Statistics</h2>
+        <div>Total Referrals: <span id="totalReferrals">0</span></div>
+        <div>Active Bookings: <span id="activeBookings">0</span></div>
+        <div>Commission Earned: $<span id="commission">0.00</span></div>
     </div>
-
+    
+    <!-- Service Catalog for Partners -->
+    <div id="serviceCatalog">
+        <h2>Available Services to Refer</h2>
+        <div id="services"></div>
+    </div>
+    
+    <!-- Book on Behalf of Patient -->
+    <div id="bookingForm">
+        <h2>Create Referral Booking</h2>
+        <form id="referralForm">
+            <input type="text" name="patientName" placeholder="Patient Name" required>
+            <input type="email" name="patientEmail" placeholder="Patient Email" required>
+            <select name="serviceId" id="serviceSelect"></select>
+            <input type="date" name="bookingDate" required>
+            <button type="submit">Submit Referral</button>
+        </form>
+    </div>
+    
+    <!-- Recent Referrals -->
+    <div id="recentReferrals">
+        <h2>Recent Referrals</h2>
+        <table id="referralsTable"></table>
+    </div>
+    
     <script>
-        const API_BASE = 'http://localhost:8080/jadassignment/api/services';
-
-        function toggleApiInfo() {
-            const info = document.getElementById('apiInfo');
-            info.style.display = info.style.display === 'none' ? 'block' : 'none';
-        }
-
-        async function loadServices() {
-            const category = document.getElementById('categoryFilter').value;
-            const loading = document.getElementById('loading');
-            const error = document.getElementById('error');
-            const container = document.getElementById('servicesContainer');
-
-            loading.style.display = 'block';
-            error.style.display = 'none';
-            container.innerHTML = '';
-
+        const API_BASE = 'http://localhost:8080/jadassignment/api';
+        const PARTNER_ID = 'PARTNER_001'; // ABC Hospital
+        
+        // Load partner dashboard data
+        async function loadDashboard() {
             try {
-                let url = API_BASE;
-                if (category !== 'all') {
-                    url = `${API_BASE}/category/${category}`;
-                }
-
-                const response = await fetch(url);
+                // Get services
+                const servicesResponse = await fetch(`${API_BASE}/services`);
+                const services = await servicesResponse.json();
+                displayServices(services);
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const services = await response.json();
+                // Get partner stats (you'd need to create this endpoint)
+                const statsResponse = await fetch(`${API_BASE}/partner/${PARTNER_ID}/stats`);
+                const stats = await statsResponse.json();
+                displayStats(stats);
                 
-                loading.style.display = 'none';
-
-                if (services.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: white; padding: 40px;">No services found</p>';
-                    return;
-                }
-
-                services.forEach(service => {
-                    const card = createServiceCard(service);
-                    container.appendChild(card);
-                });
-
-            } catch (err) {
-                loading.style.display = 'none';
-                error.style.display = 'block';
-                error.textContent = `Error loading services: ${err.message}. Make sure your server is running on port 8080.`;
+                // Get recent referrals
+                const referralsResponse = await fetch(`${API_BASE}/partner/${PARTNER_ID}/referrals`);
+                const referrals = await referralsResponse.json();
+                displayReferrals(referrals);
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
             }
         }
-
-        function createServiceCard(service) {
-            const card = document.createElement('div');
-            card.className = 'service-card';
-
-            const statusClass = service.active ? 'status-active' : 'status-inactive';
-            const statusText = service.active ? 'Available' : 'Unavailable';
-
-            card.innerHTML = `
-                <div class="service-header">
-                    <div class="service-name">${service.serviceName}</div>
-                    <span class="status-badge ${statusClass}">${statusText}</span>
-                </div>
-                <span class="category-badge">${service.categoryName}</span>
-                <p class="service-description">${service.description || 'Professional elderly care service'}</p>
-                <div class="service-meta">
-                    <div>
-                        <div class="price">$${service.price.toFixed(2)}/hr</div>
-                        <div class="duration">${service.duration} minutes</div>
-                    </div>
-                </div>
-            `;
-
-            return card;
+        
+        // Submit referral booking
+        document.getElementById('referralForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            const booking = {
+                partnerId: PARTNER_ID,
+                patientName: formData.get('patientName'),
+                patientEmail: formData.get('patientEmail'),
+                serviceId: formData.get('serviceId'),
+                bookingDate: formData.get('bookingDate'),
+                referralSource: 'ABC Hospital Discharge Planning'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/partner/booking`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(booking)
+                });
+                
+                if (response.ok) {
+                    alert('Referral booking created successfully!');
+                    loadDashboard(); // Refresh
+                } else {
+                    alert('Error creating booking');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+        
+        function displayServices(services) {
+            const container = document.getElementById('services');
+            const select = document.getElementById('serviceSelect');
+            
+            services.forEach(service => {
+                // Display in catalog
+                const card = document.createElement('div');
+                card.className = 'service-card';
+                card.innerHTML = `
+                    <h3>${service.serviceName}</h3>
+                    <p>${service.description}</p>
+                    <p><strong>Price: $${service.price}</strong></p>
+                    <p>Duration: ${service.duration} mins</p>
+                    <button onclick="quickRefer(${service.serviceId})">Quick Refer</button>
+                `;
+                container.appendChild(card);
+                
+                // Add to select dropdown
+                const option = document.createElement('option');
+                option.value = service.serviceId;
+                option.textContent = `${service.serviceName} - $${service.price}`;
+                select.appendChild(option);
+            });
         }
-
-        // Load all services on page load
-        window.addEventListener('load', loadServices);
+        
+        function displayStats(stats) {
+            document.getElementById('totalReferrals').textContent = stats.totalReferrals;
+            document.getElementById('activeBookings').textContent = stats.activeBookings;
+            document.getElementById('commission').textContent = stats.commission.toFixed(2);
+        }
+        
+        function displayReferrals(referrals) {
+            const table = document.getElementById('referralsTable');
+            table.innerHTML = `
+                <tr>
+                    <th>Date</th>
+                    <th>Patient</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                    <th>Commission</th>
+                </tr>
+            `;
+            
+            referrals.forEach(ref => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${ref.bookingDate}</td>
+                    <td>${ref.patientName}</td>
+                    <td>${ref.serviceName}</td>
+                    <td>${ref.status}</td>
+                    <td>$${ref.commission}</td>
+                `;
+            });
+        }
+        
+        function quickRefer(serviceId) {
+            document.getElementById('serviceSelect').value = serviceId;
+            document.getElementById('bookingForm').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Load on page load
+        window.addEventListener('load', loadDashboard);
     </script>
 </body>
 </html>
