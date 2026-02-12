@@ -33,6 +33,9 @@
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         margin-bottom: 30px;
+        display: flex; /* Added flex for alignment */
+        justify-content: space-between;
+        align-items: center;
     }
     .page-header h2 {
         margin: 0;
@@ -82,7 +85,7 @@
     }
     .action-btn {
         padding: 6px 12px;
-        margin: 0 3px;
+        margin-right: 5px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
@@ -94,18 +97,10 @@
     .action-btn:hover {
         opacity: 0.8;
     }
-    .btn-view {
-        background-color: #3498db;
-        color: white;
-    }
-    .btn-edit {
-        background-color: #f39c12;
-        color: white;
-    }
-    .btn-delete {
-        background-color: #e74c3c;
-        color: white;
-    }
+    .btn-view { background-color: #3498db; color: white; }
+    .btn-edit { background-color: #f39c12; color: white; }
+    .btn-delete { background-color: #e74c3c; color: white; }
+    
     .back-link {
         display: inline-block;
         margin-bottom: 20px;
@@ -113,9 +108,8 @@
         text-decoration: none;
         font-weight: 600;
     }
-    .back-link:hover {
-        text-decoration: underline;
-    }
+    .back-link:hover { text-decoration: underline; }
+    
     .no-members {
         text-align: center;
         padding: 40px;
@@ -125,10 +119,17 @@
 
 <div class="admin-container">
     <a href="${pageContext.request.contextPath}/AdminDashboardController" class="back-link">← Back to Dashboard</a>
-    
+
     <div class="page-header">
-        <h2>Manage Members</h2>
-        <p style="color: #7f8c8d; margin: 5px 0 0 0;">View and manage registered members</p>
+        <div>
+            <h2>Manage Members</h2>
+            <p style="color: #7f8c8d; margin: 5px 0 0 0;">View and manage registered members</p>
+        </div>
+        <a href="${pageContext.request.contextPath}/ManageMembersController?action=create" 
+           class="action-btn" 
+           style="background-color: #27ae60; color: white; padding: 12px 25px; border-radius: 5px; font-weight: 600;">
+            + Add New Member
+        </a>
     </div>
 
     <% if (message != null) { %>
@@ -150,7 +151,7 @@
                         <th>Full Name</th>
                         <th>Email</th>
                         <th>Phone</th>
-                        <th>Actions</th>
+                        <th style="text-align: center;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -161,9 +162,13 @@
                             <td><%= member.getFullName() %></td>
                             <td><%= member.getEmail() %></td>
                             <td><%= member.getPhone() != null ? member.getPhone() : "N/A" %></td>
-                            <td>
+                            <td style="text-align: center; white-space: nowrap;">
                                 <a href="${pageContext.request.contextPath}/MemberDetailsController?id=<%= member.getMemberId() %>" 
                                    class="action-btn btn-view">View</a>
+                                
+                                <a href="${pageContext.request.contextPath}/ManageMembersController?action=edit&id=<%= member.getMemberId() %>" 
+                                   class="action-btn btn-edit">Edit</a>
+                                
                                 <a href="${pageContext.request.contextPath}/ManageMembersController?action=delete&id=<%= member.getMemberId() %>" 
                                    class="action-btn btn-delete"
                                    onclick="return confirm('Are you sure you want to delete this member?')">

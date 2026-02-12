@@ -86,18 +86,34 @@
     .back-link:hover {
         text-decoration: underline;
     }
+    .btn-edit-header {
+        background: #f39c12; 
+        color: white; 
+        padding: 8px 16px; 
+        border-radius: 5px; 
+        text-decoration: none; 
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: background 0.3s;
+    }
+    .btn-edit-header:hover {
+        background: #e67e22;
+        color: white;
+    }
 </style>
 
 <div class="member-details-container">
     <a href="${pageContext.request.contextPath}/ManageMembersController" class="back-link">← Back to Members</a>
     
     <% if (member != null) { %>
-        <h2 style="margin: 20px 0;">Client Profile</h2>
+        <h2 style="margin: 20px 0;">Client Profile: <%= member.getFullName() %></h2>
         
-        <!-- Basic Information -->
         <div class="detail-section">
             <div class="section-header">
                 <h3>Basic Information</h3>
+                <a href="${pageContext.request.contextPath}/ManageMembersController?action=edit&id=<%= member.getMemberId() %>" class="btn-edit-header">
+                    Edit Profile
+                </a>
             </div>
             
             <div class="info-grid">
@@ -121,12 +137,10 @@
                     <div class="info-label">Address</div>
                     <div class="info-value"><%= member.getAddress() != null ? member.getAddress() : "Not provided" %></div>
                 </div>
-                <% if (member.getDateOfBirth() != null) { %>
-                    <div class="info-item">
-                        <div class="info-label">Date of Birth</div>
-                        <div class="info-value"><%= member.getDateOfBirth() %></div>
-                    </div>
-                <% } %>
+                <div class="info-item">
+                    <div class="info-label">Date of Birth</div>
+                    <div class="info-value"><%= member.getDateOfBirth() != null ? member.getDateOfBirth() : "Not provided" %></div>
+                </div>
                 <div class="info-item">
                     <div class="info-label">Member Since</div>
                     <div class="info-value"><%= String.format("%1$tB %1$te, %1$tY", member.getCreatedAt()) %></div>
@@ -134,10 +148,12 @@
             </div>
         </div>
         
-        <!-- Medical Information -->
         <div class="detail-section">
             <div class="section-header">
                 <h3>Medical Information</h3>
+                <a href="${pageContext.request.contextPath}/EditMedicalInfoController?member_id=<%= member.getMemberId() %>" class="btn-edit-header">
+                    Edit Medical Info
+                </a>
             </div>
             
             <% if (medicalInfo != null) { %>
@@ -168,11 +184,10 @@
                     </div>
                 </div>
             <% } else { %>
-                <p style="color: #7f8c8d;">No medical information recorded.</p>
+                <p style="color: #7f8c8d; padding: 10px;">No medical information recorded.</p>
             <% } %>
         </div>
         
-        <!-- Emergency Contacts -->
         <div class="detail-section">
             <div class="section-header">
                 <h3>Emergency Contacts</h3>
@@ -199,7 +214,7 @@
                     </div>
                 <% } %>
             <% } else { %>
-                <p style="color: #7f8c8d;">No emergency contacts recorded.</p>
+                <p style="color: #7f8c8d; padding: 10px;">No emergency contacts recorded.</p>
             <% } %>
         </div>
         
